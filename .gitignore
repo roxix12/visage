@@ -22,3 +22,5 @@ RELEASING.md
 dist/
 *.dmg
 *.dmg.sha256
+# ...except the download served by the website
+!website/Visage-1.1.dmg
