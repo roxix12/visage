@@ -12,12 +12,14 @@ export DEVELOPER_DIR="${DEVELOPER_DIR:-/Applications/Xcode.app/Contents/Develope
 PROJECT=Visage.xcodeproj/project.pbxproj
 VERSION=$(sed -nE 's/.*MARKETING_VERSION = ([^;]+);.*/\1/p' $PROJECT | head -1)
 BUILD=build
-APP=$BUILD/Release/Visage.app
-rm -rf $BUILD/Release $BUILD/obj
+APP=$BUILD/DerivedData/Build/Products/Release/Visage.app
+rm -rf $BUILD/DerivedData/Build/Products/Release
 mkdir -p $BUILD dist
 
 if [[ -n "${VISAGE_TEAM:-}" ]]; then
-  SIGNING=(DEVELOPMENT_TEAM="$VISAGE_TEAM" CODE_SIGN_STYLE=Automatic -allowProvisioningUpdates)
+  # With this Mac as the destination, a free Personal Team registers it and creates the development profile
+  # that the keychain-access-groups entitlement needs (without a profile macOS kills the app at launch).
+  SIGNING=(DEVELOPMENT_TEAM="$VISAGE_TEAM" CODE_SIGN_STYLE=Automatic -allowProvisioningUpdates -allowProvisioningDeviceRegistration)
 else
   echo "warning: VISAGE_TEAM is not set — building ad-hoc; saving the Mac password will not work." >&2
   # keychain-access-groups needs a team, so the ad-hoc build keeps only the camera entitlement.
@@ -34,8 +36,8 @@ EOF
 fi
 
 echo "==> Building Visage $VERSION"
-xcodebuild -project Visage.xcodeproj -target Visage -configuration Release \
-  SYMROOT="$PWD/$BUILD" OBJROOT="$PWD/$BUILD/obj" ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO \
+xcodebuild -project Visage.xcodeproj -scheme Visage -configuration Release -destination 'platform=macOS' \
+  -derivedDataPath $BUILD/DerivedData ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO \
   "${SIGNING[@]}" build > $BUILD/xcodebuild.log || { tail -30 $BUILD/xcodebuild.log; exit 1; }
 codesign --verify --strict --verbose=2 $APP
 
