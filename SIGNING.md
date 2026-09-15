@@ -1,6 +1,6 @@
 # Signing and notarizing Visage
 
-This produces a Visage DMG that opens on any Mac without warnings and where Face Unlock can store the Mac password behind Touch ID — the same way the downloadable build of any Mac app outside the App Store is made.
+This produces a Visage DMG that opens on any Mac without warnings and where Face Unlock can store the Mac password behind Touch ID. It's the same way the downloadable build of any Mac app outside the App Store is made.
 
 You need:
 
@@ -36,9 +36,9 @@ The finished file is `dist/Visage-1.1.dmg`. Send that back.
 
 ## If something fails
 
-- **"… app identifier com.cdwburhan.visage is not available"** — the bundle ID is taken by another team. Rerun with a different one:
+- **"… app identifier com.cdwburhan.visage is not available"**: the bundle ID is taken by another team. Rerun with a different one:
   `VISAGE_BUNDLE_ID=com.cdwburhan.visage.app VISAGE_TEAM=… VISAGE_NOTARY_PROFILE=visage-notary ./scripts/make-dmg.sh`
-- **"No Developer ID Application certificate"** — repeat step 1.2 with the Account Holder's Apple ID.
-- **"Your team has no devices…"** — open `Visage.xcodeproj` in Xcode once, choose the Visage target → Signing & Capabilities → pick your team, and click **Register Device** if shown. Then rerun the command.
-- **Notarization not accepted** — the script prints Apple's log; send the full Terminal output.
+- **"No Developer ID Application certificate"**: repeat step 1.2 with the Account Holder's Apple ID.
+- **"Your team has no devices…"**: open `Visage.xcodeproj` in Xcode once, choose the Visage target → Signing & Capabilities → pick your team, and click **Register Device** if shown. Then rerun the command.
+- **Notarization not accepted**: the script prints Apple's log; send the full Terminal output.
 - Build errors are logged in `build/xcodebuild.log`.

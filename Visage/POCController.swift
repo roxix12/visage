@@ -92,11 +92,11 @@ final class POCController {
     /// confirms the screen is actually locked.
     func injectStoredPassword(requireAuthoritativeLock: Bool = false) async {
         guard KeystrokeInjector.isAccessibilityTrusted() else {
-            statusMessage = "Accessibility not granted — open System Settings and enable Visage."
+            statusMessage = "Accessibility not granted. Open System Settings and enable Visage."
             return
         }
         guard SecureCredentialManager.isSessionUnlocked else {
-            statusMessage = "Session locked — authenticate with Touch ID first."
+            statusMessage = "Session locked. Authenticate with Touch ID first."
             return
         }
 

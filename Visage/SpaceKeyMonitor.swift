@@ -62,7 +62,7 @@ final class SpaceKeyMonitor {
     @discardableResult
     static func requestInputMonitoringAccess() -> Bool {
         guard !isLaunchedByXcode else {
-            log.error("requestAccess SKIPPED — launched by Xcode, request would be attributed to Xcode")
+            log.error("requestAccess SKIPPED: launched by Xcode, request would be attributed to Xcode")
             return hasInputMonitoringAccess()
         }
         let granted = IOHIDRequestAccess(kIOHIDRequestTypeListenEvent)
@@ -104,7 +104,7 @@ final class SpaceKeyMonitor {
         // Ground truth about HID access (unlike IOHIDCheckAccess); logged since a failure here is a silent no-op on the lock screen.
         let result = IOHIDManagerOpen(mgr, IOOptionBits(kIOHIDOptionsTypeNone))
         guard result == kIOReturnSuccess else {
-            Self.log.error("IOHIDManagerOpen FAILED (0x\(String(result, radix: 16), privacy: .public)) — space key won't be seen")
+            Self.log.error("IOHIDManagerOpen FAILED (0x\(String(result, radix: 16), privacy: .public)), so the space key won't be seen")
             IOHIDManagerUnscheduleFromRunLoop(mgr, CFRunLoopGetMain(), CFRunLoopMode.commonModes.rawValue)
             return
         }

@@ -66,7 +66,7 @@ else
   if [[ -n "${VISAGE_TEAM:-}" ]]; then
     SIGNING=("${TEAM_SIGNING[@]}")
   else
-    echo "warning: VISAGE_TEAM is not set — building ad-hoc; saving the Mac password will not work." >&2
+    echo "warning: VISAGE_TEAM is not set. Building ad-hoc, so saving the Mac password will not work." >&2
     # keychain-access-groups needs a team, so the ad-hoc build keeps only the camera entitlement.
     cat > $BUILD/adhoc.entitlements <<'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
@@ -91,7 +91,7 @@ ditto $APP "$STAGE/Visage.app"
 ln -s /Applications "$STAGE/Applications"
 cp LICENSE "$STAGE/License.txt"
 cat > "$STAGE/Read Me First.txt" <<EOF
-Visage $VERSION — face unlock for Mac
+Visage $VERSION: face unlock for Mac
 Made by cdwburhan. Free.
 
 INSTALL

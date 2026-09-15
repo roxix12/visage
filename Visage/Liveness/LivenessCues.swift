@@ -55,11 +55,11 @@ enum LivenessCue: String, CaseIterable, Hashable, Identifiable {
     /// One-line explanation of what firing actually means, for Face Lab.
     nonisolated var explanation: String {
         switch self {
-        case .glossGlare: return "Large flat specular highlight — glass/screen glare rather than skin's small scattered shine."
-        case .deviceDetected: return "A device-shaped rectangle overlaps the face — a phone or tablet held up."
-        case .flatVs3D: return "Held-out nose points miss the plane fit — the face has real depth."
-        case .depthPose: return "Nose offset tracks head yaw — the nose sits off the eye plane, so this isn't flat."
-        case .blink: return "Eye aspect ratio dipped and recovered — a photo cannot blink."
+        case .glossGlare: return "Large flat specular highlight: glass/screen glare rather than skin's small scattered shine."
+        case .deviceDetected: return "A device-shaped rectangle overlaps the face, like a phone or tablet held up."
+        case .flatVs3D: return "Held-out nose points miss the plane fit, so the face has real depth."
+        case .depthPose: return "Nose offset tracks head yaw: the nose sits off the eye plane, so this isn't flat."
+        case .blink: return "Eye aspect ratio dipped and recovered. A photo cannot blink."
         }
     }
 }
@@ -160,8 +160,8 @@ enum LivenessDecision: Equatable {
     var denialReason: String? {
         guard case .denied(let cue) = self else { return nil }
         switch cue {
-        case .glossGlare: return "Screen glare detected — this looks like a photo on a display."
-        case .deviceDetected: return "A device-shaped rectangle was detected around the face — this looks like a photo or screen."
+        case .glossGlare: return "Screen glare detected. This looks like a photo on a display."
+        case .deviceDetected: return "A device-shaped rectangle was detected around the face. This looks like a photo or screen."
         default: return "Liveness check failed."
         }
     }

@@ -94,7 +94,7 @@ final class FaceLabController {
         }
         store.reloadIfUnlocked()
         if pipeline.usingFallbackEmbedder {
-            log("ArcFace unavailable (\(pipeline.fallbackReason ?? "unknown reason")) — using Vision Feature Print instead.")
+            log("ArcFace unavailable (\(pipeline.fallbackReason ?? "unknown reason")). Using Vision Feature Print instead.")
         } else {
             log("Using \(pipeline.embedder.name).")
         }
@@ -178,7 +178,7 @@ final class FaceLabController {
 
     func captureSample() {
         guard let result = currentResult else {
-            log("No face detected — can't capture a sample.")
+            log("No face detected, so a sample can't be captured.")
             return
         }
         let trimmedName = enrollName.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -237,7 +237,7 @@ final class FaceLabController {
     }
 
     static func qualityLabel(_ quality: Float?) -> String {
-        guard let quality else { return "—" }
+        guard let quality else { return "n/a" }
         return String(format: "%.0f%%", quality * 100)
     }
 
@@ -245,13 +245,13 @@ final class FaceLabController {
 
     func recognize() {
         guard let result = currentResult else {
-            log("No face detected — can't recognize.")
+            log("No face detected, so there's nothing to recognize.")
             recognitionResults = []
             bestMatch = nil
             return
         }
         guard !store.identities.isEmpty else {
-            log("No enrolled identities yet — capture a sample first.")
+            log("No enrolled identities yet. Capture a sample first.")
             recognitionResults = []
             bestMatch = nil
             return
@@ -275,7 +275,7 @@ final class FaceLabController {
 
         if let best = scored.first {
             let verdict = (bestMatch != nil) ? "MATCH" : "no match"
-            let staleNote = best.identity.isStale(comparedTo: embedder) ? " [STALE — re-enroll under current model]" : ""
+            let staleNote = best.identity.isStale(comparedTo: embedder) ? " [STALE: re-enroll under current model]" : ""
             log("Recognize: best = \(best.identity.name) centroid=\(String(format: "%.3f", best.centroidSimilarity)) max=\(String(format: "%.3f", best.maxSampleSimilarity)) -> \(verdict)\(staleNote)")
         }
     }
@@ -289,7 +289,7 @@ final class FaceLabController {
     /// threshold slider actually gates on).
     func recordCalibrationSample(isGenuine: Bool) {
         guard let top = recognitionResults.first else {
-            log("Nothing to record — run Identify first.")
+            log("Nothing to record. Run Identify first.")
             return
         }
         calibrationSamples.append(CalibrationSample(centroidSimilarity: top.centroidSimilarity, isGenuine: isGenuine))

@@ -122,7 +122,7 @@ struct YourFaceSettingsPage: View {
             SettingsCaption(text: store.loadFailure ?? "The stored data couldn't be decrypted with this session key.")
                 .multilineTextAlignment(.center)
 
-            SettingsCaption(text: "Nothing has been deleted, and Visage will not overwrite it — enrolling is blocked until this resolves. Quit and reopen Visage to retry. If it keeps failing, the session key no longer matches this data: remove the stored password on the Password tab to clear both, then set up again.")
+            SettingsCaption(text: "Nothing has been deleted, and Visage will not overwrite it. Enrolling is blocked until this resolves. Quit and reopen Visage to retry. If it keeps failing, the session key no longer matches this data: remove the stored password on the Password tab to clear both, then set up again.")
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity, minHeight: SettingsMetrics.emptyStateMinHeight)
@@ -160,7 +160,7 @@ struct YourFaceSettingsPage: View {
             }
 
             if !store.identities.isEmpty && store.activeIdentities.isEmpty {
-                SettingsCaption(text: "No identities are enabled — face unlock won't recognize anyone until you switch one back on.")
+                SettingsCaption(text: "No identities are enabled, so face unlock won't recognize anyone until you switch one back on.")
             }
 
             if let writeError {
@@ -330,7 +330,7 @@ private struct IdentityCard: View {
                 .opacity(isEnabled ? 1 : 0.45)
 
                 if isStale {
-                    Text("Captured with a different recognition model — recapture before this face can unlock your Mac.")
+                    Text("Captured with a different recognition model. Recapture before this face can unlock your Mac.")
                         .font(.system(size: 11))
                         .foregroundStyle(SettingsMetrics.qualityFairColor)
                         .fixedSize(horizontal: false, vertical: true)

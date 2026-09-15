@@ -18,7 +18,7 @@ struct FaceLabView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
-                    Text("Face Lab — On-Device Face Recognition (Debug)")
+                    Text("Face Lab: On-Device Face Recognition (Debug)")
                         .font(.headline)
                     Spacer()
                     Button("Preview ✓") {
@@ -85,7 +85,7 @@ struct FaceLabView: View {
             Text("Embedder: \(controller.pipeline.embedder.name)")
                 .font(.caption)
             if controller.pipeline.usingFallbackEmbedder {
-                Text("(ArcFace unavailable — see log)")
+                Text("(ArcFace unavailable, see log)")
                     .font(.caption)
                     .foregroundStyle(.orange)
             }
@@ -100,7 +100,7 @@ struct FaceLabView: View {
             if controller.store.isLocked {
                 HStack {
                     Circle().fill(.red).frame(width: 8, height: 8)
-                    Text("Session locked — enrolled faces are encrypted and can't be read or saved yet.")
+                    Text("Session locked. Enrolled faces are encrypted and can't be read or saved yet.")
                         .font(.caption)
                     Spacer()
                     Button("Unlock") {
@@ -159,7 +159,7 @@ struct FaceLabView: View {
                     if let quality = controller.currentResult?.quality {
                         Text("Capture quality: \(String(format: "%.0f%%", quality * 100))")
                     } else {
-                        Text("Capture quality: —")
+                        Text("Capture quality: n/a")
                             .foregroundStyle(.secondary)
                     }
                     if let result = controller.currentResult {
@@ -223,14 +223,14 @@ struct FaceLabView: View {
                 Divider()
 
                 cueGroup(
-                    title: "Deny — evidence of a spoof",
+                    title: "Deny: evidence of a spoof",
                     caption: "Either one firing fails face unlock outright, and overrides any confirmation.",
                     cues: LivenessCue.allCases.filter { $0.role == .deny }
                 )
 
                 cueGroup(
-                    title: "Confirm — evidence of a real face",
-                    caption: "Any one firing passes liveness. None firing is not a failure — the scan just keeps looking.",
+                    title: "Confirm: evidence of a real face",
+                    caption: "Any one firing passes liveness. None firing is not a failure; the scan just keeps looking.",
                     cues: LivenessCue.allCases.filter { $0.role == .confirm }
                 )
 
@@ -239,7 +239,7 @@ struct FaceLabView: View {
 
                 HStack {
                     Button("Reset cues") { controller.resetLiveness() }
-                    Text("Cue firing latches for the whole scan — reset to re-test.")
+                    Text("Cue firing latches for the whole scan. Reset to re-test.")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
                 }
@@ -253,11 +253,11 @@ struct FaceLabView: View {
         let (color, label): (Color, String) = {
             switch decision {
             case .pending:
-                return (.secondary, "Pending — nothing decided yet")
+                return (.secondary, "Pending: nothing decided yet")
             case .confirmed(let cue):
-                return (.green, cue.map { "Live — confirmed by \($0.title)" } ?? "Live — auto-confirmed (Light mode)")
+                return (.green, cue.map { "Live: confirmed by \($0.title)" } ?? "Live: auto-confirmed (Light mode)")
             case .denied(let cue):
-                return (.red, "Spoof — denied by \(cue.title)")
+                return (.red, "Spoof: denied by \(cue.title)")
             }
         }()
         return HStack(spacing: 10) {
@@ -319,7 +319,7 @@ struct FaceLabView: View {
             }
             .frame(height: 8)
 
-            Text(hasEvidence ? String(format: "%.0f%%", state.reading.level * 100) : "—")
+            Text(hasEvidence ? String(format: "%.0f%%", state.reading.level * 100) : "n/a")
                 .font(.caption.monospacedDigit())
                 .frame(width: 36, alignment: .trailing)
 
@@ -345,7 +345,7 @@ struct FaceLabView: View {
                 if let glare = frame.glare {
                     Text("Specular: \(String(format: "%.4f", glare.specularFraction))  Cluster: \(String(format: "%.2f", glare.specularClusterRatio))  Crop: \(Int(glare.cropPixelWidth))px")
                 } else {
-                    Text("Specular: — (no native-resolution crop this frame)")
+                    Text("Specular: n/a (no native-resolution crop this frame)")
                 }
             } else {
                 Text("No liveness frame yet.")
@@ -370,7 +370,7 @@ struct FaceLabView: View {
                 }.joined(separator: "  "))
             }
             if geo.planarConfidence == 0 {
-                Text("Abstaining — not enough head rotation to tell a plane from a still 3D face.")
+                Text("Abstaining: not enough head rotation to tell a plane from a still 3D face.")
                     .foregroundStyle(.secondary)
             }
         }
@@ -380,12 +380,12 @@ struct FaceLabView: View {
     }
 
     private func ratioString(_ value: CGFloat?) -> String {
-        guard let value else { return "—" }
+        guard let value else { return "n/a" }
         return String(format: "%+.3f", value)
     }
 
     private func percentString(_ value: CGFloat?) -> String {
-        guard let value else { return "—" }
+        guard let value else { return "n/a" }
         return String(format: "%.0f%%", value * 100)
     }
 
@@ -453,7 +453,7 @@ struct FaceLabView: View {
                 if controller.store.identities.isEmpty {
                     Text(controller.store.isLocked
                          ? "Unlock the session to view enrolled identities."
-                         : "No identities enrolled yet — run the guided nine-pose capture with Add Identity.")
+                         : "No identities enrolled yet. Run the guided nine-pose capture with Add Identity.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 } else {
@@ -495,13 +495,13 @@ struct FaceLabView: View {
                 if let best = controller.bestMatch {
                     HStack {
                         Circle().fill(.green).frame(width: 10, height: 10)
-                        Text("Best match: \(best.name) — centroid \(String(format: "%.3f", best.centroidSimilarity)), max \(String(format: "%.3f", best.maxSampleSimilarity))")
+                        Text("Best match: \(best.name), centroid \(String(format: "%.3f", best.centroidSimilarity)), max \(String(format: "%.3f", best.maxSampleSimilarity))")
                         Text("MATCH").font(.caption.bold()).foregroundStyle(.green)
                     }
                 } else if let first = controller.recognitionResults.first {
                     HStack {
                         Circle().fill(.red).frame(width: 10, height: 10)
-                        Text("Closest: \(first.name) — centroid \(String(format: "%.3f", first.centroidSimilarity)), max \(String(format: "%.3f", first.maxSampleSimilarity))")
+                        Text("Closest: \(first.name), centroid \(String(format: "%.3f", first.centroidSimilarity)), max \(String(format: "%.3f", first.maxSampleSimilarity))")
                         Text("NO MATCH").font(.caption.bold()).foregroundStyle(.red)
                     }
                 }
@@ -533,7 +533,7 @@ struct FaceLabView: View {
     private var calibrationSection: some View {
         GroupBox("Threshold Calibration") {
             VStack(alignment: .leading, spacing: 8) {
-                Text("Run Identify, then tag whether that was really you or someone else — do this across lighting, angle, and expression, and again with a different person, to see where the two score distributions actually fall.")
+                Text("Run Identify, then tag whether that was really you or someone else. Do this across lighting, angle, and expression, and again with a different person, to see where the two score distributions actually fall.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
@@ -577,7 +577,7 @@ struct FaceLabView: View {
                                 controller.threshold = Double(suggested)
                             }
                             if controller.calibrationDistributionsOverlap {
-                                Text("Distributions overlap — no single cutoff perfectly separates these samples yet.")
+                                Text("Distributions overlap, so no single cutoff perfectly separates these samples yet.")
                                     .font(.caption)
                                     .foregroundStyle(.orange)
                             }
@@ -612,7 +612,7 @@ struct FaceLabView: View {
     }
 
     private func yawPitchString(_ value: Float?) -> String {
-        guard let value else { return "—" }
+        guard let value else { return "n/a" }
         return String(format: "%+.2f", value)
     }
 }

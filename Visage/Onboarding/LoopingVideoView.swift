@@ -60,7 +60,7 @@ final class LoopingVideoHostView: NSView {
         teardown()
 
         guard let url = Bundle.main.url(forResource: resourceName, withExtension: "mp4") else {
-            assertionFailure("\(resourceName).mp4 missing from bundle — check Visage/Resources/")
+            assertionFailure("\(resourceName).mp4 missing from bundle, check Visage/Resources/")
             return
         }
 

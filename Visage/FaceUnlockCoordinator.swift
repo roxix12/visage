@@ -112,7 +112,7 @@ final class FaceUnlockCoordinator {
         guard NotchGeometry.preferredScreen() != nil else { return }
 
         guard SecureCredentialManager.isSessionUnlocked else {
-            statusMessage = "Face unlock is on, but the session is locked — authenticate once from Password settings first."
+            statusMessage = "Face unlock is on, but the session is locked. Authenticate once from Password settings first."
             return
         }
         guard SecureCredentialManager.hasStoredPassword() else {
@@ -271,7 +271,7 @@ final class FaceUnlockCoordinator {
             statusMessage = "Face not recognized."
             if showsUI {
                 NotchOverlayController.shared.finish(success: false)
-                statusMessage = "Face not recognized — hover the notch to try again."
+                statusMessage = "Face not recognized. Hover the notch to try again."
                 scheduleAutoRetryIfEnabled(after: NotchOverlayController.shared.failureHoldDuration)
             } else {
                 scheduleAutoRetryIfEnabled(after: headlessRetryDelay)
@@ -280,7 +280,7 @@ final class FaceUnlockCoordinator {
             statusMessage = "Couldn't confirm a live face."
             if showsUI {
                 NotchOverlayController.shared.finish(success: false)
-                statusMessage = "Couldn't confirm a live face — hover the notch to try again."
+                statusMessage = "Couldn't confirm a live face. Hover the notch to try again."
                 scheduleAutoRetryIfEnabled(after: NotchOverlayController.shared.failureHoldDuration)
             } else {
                 scheduleAutoRetryIfEnabled(after: headlessRetryDelay)
@@ -289,7 +289,7 @@ final class FaceUnlockCoordinator {
             statusMessage = "No face detected."
             if showsUI {
                 // No explicit collapse call: NotchOverlayController's own scanning timeout fires on the same mark and collapses itself.
-                statusMessage = "No face detected — hover the notch to try again."
+                statusMessage = "No face detected. Hover the notch to try again."
                 scheduleAutoRetryIfEnabled(after: NotchOverlayController.shared.collapseAnimationDuration)
             } else {
                 scheduleAutoRetryIfEnabled(after: headlessRetryDelay)
@@ -401,7 +401,7 @@ final class FaceUnlockCoordinator {
             }
 
             if let readyMatch, livenessConfirmed {
-                statusMessage = "Recognized — unlocking…"
+                statusMessage = "Recognized, unlocking…"
                 let livenessNote = livenessEnabled
                     ? (confirmingCue.map { "live via \($0.title)" } ?? "liveness clear")
                     : "liveness off"
