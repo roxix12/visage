@@ -16,6 +16,7 @@ enum SettingsTab: String, CaseIterable, Identifiable, Hashable {
     case camera
     case recognition
     case privacy
+    case community
     case about
     case debugFaceLab
 
@@ -30,6 +31,7 @@ enum SettingsTab: String, CaseIterable, Identifiable, Hashable {
         case .camera: return "Camera"
         case .recognition: return "Recognition"
         case .privacy: return "Privacy"
+        case .community: return "Community"
         case .about: return "About"
         case .debugFaceLab: return "Face Lab"
         }
@@ -44,6 +46,7 @@ enum SettingsTab: String, CaseIterable, Identifiable, Hashable {
         case .camera: return "video.fill"
         case .recognition: return "sparkles"
         case .privacy: return "hand.raised.fill"
+        case .community: return "bubble.left.and.bubble.right.fill"
         case .about: return "info"
         case .debugFaceLab: return "flask.fill"
         }
@@ -59,6 +62,8 @@ enum SettingsTab: String, CaseIterable, Identifiable, Hashable {
         case .camera: return .green
         case .recognition: return .purple
         case .privacy: return .indigo
+        // Discord's blurple, so the pane reads as the Discord one.
+        case .community: return Color(red: 0x58 / 255, green: 0x65 / 255, blue: 0xF2 / 255)
         case .debugFaceLab: return .orange
         }
     }
@@ -69,7 +74,7 @@ enum SettingsTab: String, CaseIterable, Identifiable, Hashable {
         [
             (nil, [.overview, .general]),
             ("Authentication", [.yourFace, .password, .camera, .recognition]),
-            ("Visage", [.privacy, .about] + (includingDebug ? [.debugFaceLab] : [])),
+            ("Visage", [.privacy, .community, .about] + (includingDebug ? [.debugFaceLab] : [])),
         ]
     }
 }

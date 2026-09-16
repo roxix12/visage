@@ -228,6 +228,8 @@ struct SettingsWindowView: View {
                 )
             case .privacy:
                 PrivacySettingsPage(pocController: environment.pocController)
+            case .community:
+                CommunitySettingsPage()
             case .about:
                 AboutSettingsPage(environment: environment)
             case .debugFaceLab:
