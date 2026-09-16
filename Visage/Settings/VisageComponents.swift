@@ -10,23 +10,17 @@ import SwiftUI
 
 // MARK: - Mark
 
-/// Visage's own mark: scan brackets around an open eye, on a 100-unit grid.
-/// The app icon and the menu bar icon draw the same geometry.
+/// Visage's mark: scan brackets around a face, on a 100-unit grid.
+/// The app icon (scripts/make-icon.swift) and the menu bar icon draw the same geometry.
 struct VisageMarkView: View {
     var lineWidth: CGFloat = 3
 
     var body: some View {
-        GeometryReader { geometry in
-            let side = min(geometry.size.width, geometry.size.height)
-            ZStack {
-                VisageBrackets()
-                    .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
-                VisageEye()
-                    .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
-                Circle()
-                    .frame(width: side * 0.16, height: side * 0.16)
-            }
-            .frame(width: geometry.size.width, height: geometry.size.height)
+        ZStack {
+            VisageBrackets()
+                .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
+            VisageFace()
+                .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
         }
         .aspectRatio(1, contentMode: .fit)
         .accessibilityHidden(true)
@@ -50,14 +44,17 @@ struct VisageBrackets: Shape {
     }
 }
 
-struct VisageEye: Shape {
+struct VisageFace: Shape {
     func path(in rect: CGRect) -> Path {
         func p(_ x: CGFloat, _ y: CGFloat) -> CGPoint { markPoint(rect, x, y) }
         var path = Path()
-        path.move(to: p(24, 50))
-        path.addQuadCurve(to: p(76, 50), control: p(50, 26))
-        path.addQuadCurve(to: p(24, 50), control: p(50, 74))
-        path.closeSubpath()
+        // Eyes.
+        path.move(to: p(36, 38)); path.addLine(to: p(36, 48))
+        path.move(to: p(64, 38)); path.addLine(to: p(64, 48))
+        // Nose.
+        path.move(to: p(53, 38)); path.addLine(to: p(47, 57)); path.addLine(to: p(55, 57))
+        // Smile.
+        path.move(to: p(36, 66)); path.addQuadCurve(to: p(64, 66), control: p(50, 76))
         return path
     }
 }
