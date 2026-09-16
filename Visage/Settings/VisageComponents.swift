@@ -14,16 +14,62 @@ import SwiftUI
 /// The app icon (scripts/make-icon.swift) and the menu bar icon draw the same geometry.
 struct VisageMarkView: View {
     var lineWidth: CGFloat = 3
+    /// The mark draws itself in and sweeps a scan line, echoing the unlock animation.
+    /// Set false (or turn on Reduce Motion) for a still mark.
+    var animated: Bool = true
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    /// One full loop: draw in, hold, scan, hold.
+    private static let cycle: Double = 6.4
 
     var body: some View {
-        ZStack {
-            VisageBrackets()
-                .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
-            VisageFace()
-                .stroke(style: StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round))
+        if animated && !reduceMotion {
+            TimelineView(.animation) { context in
+                mark(at: context.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy: Self.cycle))
+            }
+        } else {
+            // Past the scan, so the glyph is complete and the line is gone.
+            mark(at: Self.cycle * 0.9)
+        }
+    }
+
+    private func mark(at time: Double) -> some View {
+        let brackets = eased(time, start: 0, duration: 0.7)
+        let eyes = eased(time, start: 0.45, duration: 0.55)
+        let nose = eased(time, start: 0.7, duration: 0.55)
+        let smile = eased(time, start: 0.9, duration: 0.6)
+        let scan = eased(time, start: 1.95, duration: 1.4)
+        let style = StrokeStyle(lineWidth: lineWidth, lineCap: .round, lineJoin: .round)
+        return GeometryReader { geometry in
+            let side = min(geometry.size.width, geometry.size.height)
+            ZStack {
+                VisageBrackets().trim(from: 0, to: brackets).stroke(style: style)
+                VisageEyes().trim(from: 0, to: eyes).stroke(style: style)
+                VisageNose().trim(from: 0, to: nose).stroke(style: style)
+                VisageSmile().trim(from: 0, to: smile).stroke(style: style)
+                Capsule()
+                    .frame(width: side * 0.66, height: max(1, lineWidth * 0.6))
+                    .offset(y: side * (-0.2 + 0.4 * scan))
+                    .opacity(scanOpacity(scan))
+            }
+            .frame(width: geometry.size.width, height: geometry.size.height)
         }
         .aspectRatio(1, contentMode: .fit)
         .accessibilityHidden(true)
+    }
+
+    /// Smoothstep between `start` and `start + duration`, clamped either side.
+    private func eased(_ time: Double, start: Double, duration: Double) -> CGFloat {
+        let t = min(max((time - start) / duration, 0), 1)
+        return CGFloat(t * t * (3 - 2 * t))
+    }
+
+    /// The line fades in, sweeps, and fades out again.
+    private func scanOpacity(_ progress: CGFloat) -> Double {
+        guard progress > 0, progress < 1 else { return 0 }
+        if progress < 0.15 { return Double(progress / 0.15) }
+        if progress > 0.85 { return Double((1 - progress) / 0.15) }
+        return 1
     }
 }
 
@@ -44,16 +90,29 @@ struct VisageBrackets: Shape {
     }
 }
 
-struct VisageFace: Shape {
+struct VisageEyes: Shape {
     func path(in rect: CGRect) -> Path {
         func p(_ x: CGFloat, _ y: CGFloat) -> CGPoint { markPoint(rect, x, y) }
         var path = Path()
-        // Eyes.
         path.move(to: p(36, 38)); path.addLine(to: p(36, 48))
         path.move(to: p(64, 38)); path.addLine(to: p(64, 48))
-        // Nose.
+        return path
+    }
+}
+
+struct VisageNose: Shape {
+    func path(in rect: CGRect) -> Path {
+        func p(_ x: CGFloat, _ y: CGFloat) -> CGPoint { markPoint(rect, x, y) }
+        var path = Path()
         path.move(to: p(53, 38)); path.addLine(to: p(47, 57)); path.addLine(to: p(55, 57))
-        // Smile.
+        return path
+    }
+}
+
+struct VisageSmile: Shape {
+    func path(in rect: CGRect) -> Path {
+        func p(_ x: CGFloat, _ y: CGFloat) -> CGPoint { markPoint(rect, x, y) }
+        var path = Path()
         path.move(to: p(36, 66)); path.addQuadCurve(to: p(64, 66), control: p(50, 76))
         return path
     }
